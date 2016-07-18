@@ -1,6 +1,7 @@
 class App {
   constructor() {
     this.tabContainer = document.querySelector('.tab-list');
+    this.fileInputs = Array.from(document.querySelectorAll('.inputFile'));
 
     this.cleanActiveTabs = this.cleanActiveTabs.bind(this);
     this.showTab = this.showTab.bind(this);
@@ -21,6 +22,25 @@ class App {
         target.classList.add('active');
       }
     });
+
+    this.fileInputs.forEach(input => {
+      let label  = input.nextElementSibling;
+
+      input.addEventListener('change',e => {
+        let fileName = '';
+        if(input.files && input.files.length > 1) {
+          fileName = (input.getAttribute('data-multiple-caption') || '').replace('{count}', input.files.length);
+        } else {
+          fileName = e.target.value.split( '\\' ).pop();
+        }
+
+        if(fileName) {
+          label.querySelector('span').innerHTML = fileName;
+        }
+      });
+
+    });
+
   }
 
   /**
@@ -43,7 +63,7 @@ class App {
   cleanActiveTabs() {
     const tabList = Array.from(this.tabContainer.querySelectorAll('li'));
 
-    tabList.forEach(node => {
+    tabList.map(node => {
       node.classList.remove('active');
     })
   }
@@ -51,7 +71,7 @@ class App {
   showContent(target) {
     const contentList = Array.from(document.querySelectorAll('.tab-content'));
 
-    contentList.forEach(node => {
+    contentList.map(node => {
       if(node !== target) {
         node.classList.remove('show');
       } else {

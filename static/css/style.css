@@ -28,7 +28,7 @@ nav ul {
 }
 nav .tab-list li {
   padding: 1px;
-  color: rgba(255, 255, 255, 1);
+  color: rgba(255,255,255,0.8);
   cursor: pointer;
   line-height: 40px;
   margin: 0;
@@ -37,7 +37,7 @@ nav .tab-list li {
 }
 
 .active {
-  border-bottom: 5px solid rgba(255, 255, 255, 1);
+  border-bottom: 5px solid rgba(255,255,255,0.8);
 }
 
 nav .tab-list li:active{
@@ -50,6 +50,7 @@ nav .tab-list li:active{
  */
 
 .tab-content {
+  left: 12%;
   transform: translateX(-100vw);
   position: absolute;
 }
@@ -57,3 +58,56 @@ nav .tab-list li:active{
   transform: translateX(0);
 }
 
+.inputFile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.inputFile + label {
+  color: rgba(138, 43, 226, 1);
+  background-color: rgba(255,255,255,0.8);
+  max-width: 80%;
+  white-space: nowrap;
+  font-size: 1.25em;
+  font-weight: 700;
+  display: inline-block;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  padding: 0.625rem 1.25rem;
+}
+
+.inputFile + label:hover {
+  background-color: rgba(138, 43, 226, 1);
+  color: rgba(255,255,255,0.8);
+}
+
+.inputFile:focus + label {
+  outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px;
+}
+
+.inputFile + label * {
+  pointer-events: none;
+}
+
+.inputFile + label svg {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  fill: currentColor;
+  margin-top: -0.25em;
+  /* 4px */
+  margin-right: 0.25em;
+  /* 4px */
+}
+
+.description {
+  color: aliceblue;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 40px;
+}
