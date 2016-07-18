@@ -1,7 +1,7 @@
 body , :after, :before {
   font-family: Arial;
   box-sizing: border-box;
-  background: orange;
+  background: rgba(138, 43, 226, 1);
   /* http://szafranek.net/works/articles/font-smoothing-explained/ */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -16,4 +16,28 @@ body , :after, :before {
   margin-right: 10%;
   position: relative;
 
+}
+
+nav ul {
+  list-style: none;
+  font-weight: bold;
+  text-align: center;
+}
+nav .tab-list li {
+  padding: 1px;
+  color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+  line-height: 40px;
+  margin: 0;
+  width: 30%;
+  display: inline-block;
+}
+
+.active {
+  border-bottom: 5px solid rgba(255, 255, 255, 1);
+}
+
+nav .tab-list li:active{
+  padding: 0px;
+  border: 1px solid white;
 }
