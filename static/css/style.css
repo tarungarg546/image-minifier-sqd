@@ -1,0 +1,19 @@
+body , :after, :before {
+  font-family: Arial;
+  box-sizing: border-box;
+  background: orange;
+  /* http://szafranek.net/works/articles/font-smoothing-explained/ */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.container {
+  margin-left: 10%;
+  margin-right: 10%;
+  position: relative;
+
+}
