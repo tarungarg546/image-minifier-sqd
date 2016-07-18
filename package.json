@@ -1,0 +1,20 @@
+{
+  "name": "image-minifier-sqd",
+  "version": "1.0.0",
+  "description": "image-compressor which is task given by @squadrun",
+  "main": "server.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tarungarg546/image-minifier-sqd.git"
+  },
+  "author": "Tarun Garg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tarungarg546/image-minifier-sqd/issues"
+  },
+  "homepage": "https://github.com/tarungarg546/image-minifier-sqd#readme"
+}
