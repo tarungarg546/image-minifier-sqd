@@ -101,7 +101,7 @@ class App {
       return formData;
     }
 
-    fetch('/submit',{
+    fetch(`/submit/${node.dataset.target}`,{
       method:'POST',
       body: __getData(node.dataset.target)
     })
@@ -122,10 +122,10 @@ class App {
           console.log("Fetch complete");
           return;
         }
-
+        var date = new Date();
         // result.value for fetch streams is a Uint8Array
         console.log(
-            decoder.decode(result.value, {stream: true})
+            decoder.decode(result.value, {stream: true}) + date
           );
 
         // Read some more, and call this function again

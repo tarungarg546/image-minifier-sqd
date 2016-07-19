@@ -1,3 +1,8 @@
+#upload directory
+uploads
+
+#csv
+*.csv
 # Logs
 logs
 *.log
