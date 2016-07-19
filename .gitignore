@@ -1,6 +1,8 @@
 #upload directory
 uploads
 
+#static build
+static/build
 #csv
 *.csv
 # Logs

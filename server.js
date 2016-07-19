@@ -11,17 +11,41 @@ const csv = require('csv-streamify');
 const Transform = require('stream').Transform;
 const csvParser = csv();
 const got = require('got');
+const imagemin = require('imagemin');
+const imageminMozjpeg = require('imagemin-mozjpeg');
+const imageminPngquant = require('imagemin-pngquant');
+const imageminSvgo = require('imagemin-svgo');
+const imageminGifsicle = require('imagemin-gifsicle');
+
 app.get('/',(req, res) => res.render('index'));
+app.get('/image/:name',(req,res)=> {
+  const name=decodeURIComponent(req.params.name);
+  res.sendFile(path.resolve(__dirname,'static/images/'+name));
+});
 
 var parser = new Transform({objectMode: true});
 parser._transform = function(data, encoding, done) {
-  link = data.toString().slice(1,-2);
+  const link = data.toString().slice(2,-3);
+  const date = new Date();
+  console.log(link.split('\\'))
+  const fileName = date.getTime()+ '.' +link.split( '/' ).pop(),
+        filePath = path.resolve(__dirname,`uploads/src/${fileName}`);
   got.stream(link)
-  .pipe(fs.createWriteStream(path.resolve(__dirname,'/uploads/src/link')))
+  .pipe(fs.createWriteStream(filePath,{flags:'a'}))
   .on('close',_ => {
-    this.push(link);
-    done();  
-  })
+    imagemin([filePath],'static/build',{
+      plugins: [
+        imageminMozjpeg(),
+        imageminPngquant(),
+        imageminSvgo(),
+        imageminGifsicle()
+      ]
+    }).then(file => {
+      console.log(file);
+      this.push(link);
+      done(); 
+    }); 
+  });
   
 };
 
