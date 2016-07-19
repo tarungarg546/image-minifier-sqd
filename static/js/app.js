@@ -2,6 +2,7 @@ class App {
   constructor() {
     this.tabContainer = document.querySelector('.tab-list');
     this.fileInputs = Array.from(document.querySelectorAll('.inputFile'));
+    this.submitButtons = Array.from(document.querySelectorAll('.submit'));
 
     this.cleanActiveTabs = this.cleanActiveTabs.bind(this);
     this.showTab = this.showTab.bind(this);
@@ -25,7 +26,6 @@ class App {
 
     this.fileInputs.forEach(input => {
       let label  = input.nextElementSibling;
-
       input.addEventListener('change',e => {
         let fileName = '';
         if(input.files && input.files.length > 1) {
@@ -33,13 +33,20 @@ class App {
         } else {
           fileName = e.target.value.split( '\\' ).pop();
         }
-
         if(fileName) {
           label.querySelector('span').innerHTML = fileName;
         }
       });
-
     });
+
+    this.submitButtons.forEach(button => {
+      const target = button.dataset.target;
+      button.addEventListener('click',ev => {
+        const json = this.getObjToBeSubmitted(target);
+
+        this.submit(json);
+      })
+    })
 
   }
 
@@ -65,7 +72,7 @@ class App {
 
     tabList.map(node => {
       node.classList.remove('active');
-    })
+    });
   }
 
   showContent(target) {
@@ -77,7 +84,30 @@ class App {
       } else {
         node.classList.add('show');
       }
-    })
+    });
+  }
+
+  getObjToBeSubmitted(target) {
+    const input = document.querySelector(`#${target}`);
+    let data;
+
+    const jsonToBeSent = {
+      'type': target
+    }
+
+    
+    if(target !== 'urls') {
+      data = input.files;
+    } else {
+      data = input.value;
+    }
+
+    jsonToBeSent.data = data;
+    return jsonToBeSent;
+  }
+
+  submit(json) {
+    console.log(json);
   }
 }
 
