@@ -5,8 +5,8 @@ const init = express => {
   const bodyParser = require('body-parser');
   const app = express();
 
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json()); //application/json
+  app.use(bodyParser.urlencoded({ extended: true }));// application/xxx-form-encoded
   app.set('views', __dirname+'/../views');
   app.set('view engine', 'ejs');
   app.use(express.static(__dirname+'/../static'));

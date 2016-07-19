@@ -4,110 +4,134 @@ class App {
     this.fileInputs = Array.from(document.querySelectorAll('.inputFile'));
     this.submitButtons = Array.from(document.querySelectorAll('.submit'));
 
-    this.cleanActiveTabs = this.cleanActiveTabs.bind(this);
-    this.showTab = this.showTab.bind(this);
-    this.showContent = this.showContent.bind(this);
+    this._showTab = this._showTab.bind(this);
+    this._submit = this._submit.bind(this);
+    this._handleFileInput = this._handleFileInput.bind(this);
 
-    this.showTab(this.tabContainer.querySelector('.active'))
-    this.addEventListeners();
+    this._showTab(this.tabContainer.querySelector('.active'));
+    this._addEventListeners();
   }
 
-  addEventListeners() {
-    //Use event bubbling because attaching event handler to one DOM element is cheaper than
-    //to attach it on multiples __ tradeoff :- memory usage
-    this.tabContainer.addEventListener('click',ev => {
-      const target = ev.target;
-
-      if(target.nodeName === 'LI') {
-        this.showTab(target);
-        target.classList.add('active');
-      }
-    });
+  _addEventListeners() {
+    
+    this.tabContainer.addEventListener('click',this._showTab);
 
     this.fileInputs.forEach(input => {
       let label  = input.nextElementSibling;
-      input.addEventListener('change',e => {
-        let fileName = '';
-        if(input.files && input.files.length > 1) {
-          fileName = (input.getAttribute('data-multiple-caption') || '').replace('{count}', input.files.length);
-        } else {
-          fileName = e.target.value.split( '\\' ).pop();
-        }
-        if(fileName) {
-          label.querySelector('span').innerHTML = fileName;
-        }
-      });
+      input.addEventListener('change',this._handleFileInput);
     });
 
     this.submitButtons.forEach(button => {
       const target = button.dataset.target;
-      button.addEventListener('click',ev => {
-        const json = this.getObjToBeSubmitted(target);
-
-        this.submit(json);
-      })
-    })
-
-  }
-
-  /**
-   * [showTab Show content of target tab and clean other active tabs]
-   * @param  {[HTMLElement]} target
-   * @return {[type]}        [description]
-   */
-  showTab(target) {
-    this.cleanActiveTabs(); // clean other active tabs
+      button.addEventListener('click',this._submit);
     
-    if(!target.classList.contains('active')) {
-      target.classList.add('active'); // make this tab active
-    }
-    const targetContent = document.querySelector(`.${target.dataset.content}`)
-
-    return this.showContent(targetContent); // show content of corresponding tab
+    });
 
   }
 
-  cleanActiveTabs() {
-    const tabList = Array.from(this.tabContainer.querySelectorAll('li'));
+  _showTab(evt) {
+    const target = evt.target || evt;
+    if(target.nodeName !== 'LI') {
+      return ;
+    }
 
+    const tabList = Array.from(this.tabContainer.querySelectorAll('li'));
     tabList.map(node => {
       node.classList.remove('active');
     });
-  }
 
-  showContent(target) {
-    const contentList = Array.from(document.querySelectorAll('.tab-content'));
 
-    contentList.map(node => {
-      if(node !== target) {
-        node.classList.remove('show');
-      } else {
-        node.classList.add('show');
-      }
-    });
-  }
+    if(!target.classList.contains('active'))
+      target.classList.add('active');
 
-  getObjToBeSubmitted(target) {
-    const input = document.querySelector(`#${target}`);
-    let data;
+    const __showContent = function(target) {
+      const contentList = Array.from(document.querySelectorAll('.tab-content'));
+      contentList.map(node => {
+        if(node !== target) {
+          node.classList.remove('show');
+        } else {
+          node.classList.add('show');
+        }
+      });
 
-    const jsonToBeSent = {
-      'type': target
     }
 
-    
-    if(target !== 'urls') {
-      data = input.files;
+    const targetContent = document.querySelector(`.${target.dataset.content}`);
+
+    return __showContent(targetContent); // show content of corresponding tab
+  }
+
+  _handleFileInput(evt) {
+    const input = evt.target,
+          label = input.nextElementSibling;
+    let fileName = '';
+
+    if(input.files && input.files.length > 1) {
+      fileName = (input.getAttribute('data-multiple-caption') || '').replace('{count}', input.files.length);
     } else {
-      data = input.value;
+      fileName = input.value.split( '\\' ).pop();
     }
 
-    jsonToBeSent.data = data;
-    return jsonToBeSent;
+    if(fileName) {
+      label.querySelector('span').innerHTML = fileName;
+    }
   }
 
-  submit(json) {
-    console.log(json);
+  _submit(evt) {
+    const node = evt.target;
+    if(node.nodeName !== 'BUTTON') 
+      return ;
+
+    const __getData = function(target) {
+      const input = document.querySelector(`#${target}`);
+      let values, formData = new FormData();
+
+      formData.append('type', target);
+
+      if(target !== 'urls') {
+        values = input.files;
+      } else {
+        values = input.value.split(";");
+      }
+
+      for(const iter of values) {
+          console.log(iter)
+          formData.append('data', iter);
+      }
+      return formData;
+    }
+
+    fetch('/submit',{
+      method:'POST',
+      body: __getData(node.dataset.target)
+    })
+    .then(response => {
+      let decoder = new TextDecoder();
+      // response.body is a readable stream.
+      // Calling getReader() gives us exclusive access to
+      // the stream's content
+      let reader = response.body.getReader();
+      let bytesReceived = 0;
+      reader.read().then(function processResult(result) {
+        // Result objects contain two properties:
+        // done  - true if the stream has already given
+        //         you all its data.
+        // value - some data. Always undefined when
+        //         done is true.
+        if (result.done) {
+          console.log("Fetch complete");
+          return;
+        }
+
+        // result.value for fetch streams is a Uint8Array
+        console.log(
+            decoder.decode(result.value, {stream: true})
+          );
+
+        // Read some more, and call this function again
+        return reader.read().then(processResult);
+      });
+    });
   }
 }
 
