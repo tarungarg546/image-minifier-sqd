@@ -16,24 +16,37 @@ const csv = require('fast-csv'),
 function getReadableStream() {
   return Readable();
 }
+
+function pushIntoStream(data) {
+
+  data.forEach(datum =>  this.push(datum));
+  this.push(null);//no more data
+
+}
 function csvParser() {
   console.log(`\nCreating CSV Parser...`);
   const csvParser = csv();
   return csvParser;
 }
 
-function dataParser(tag) {
+function dataParser(tag, isPhysicalLocation) {
   console.log(`\nCreating Data Parser...`);
   const parser = new Transform({objectMode: true});
   
   parser._transform = function(data, encoding, next) {
 
-    const link = getMeaningFull(data);
+    const link = getData(data);
     
     const fileName = tag + '.' + link.split( '/' ).pop(),
           filePath = path.resolve(__dirname, `..${srcDir}/${fileName}`);
 
-    got.stream(link)
+    let stream;
+    if(isPhysicalLocation) {
+      stream = fs.createReadStream(link);
+    } else {
+      stream = got.stream(link);
+    }
+    stream
       .pipe(fs.createWriteStream(filePath, {flags: 'a'}))
       .on('close', _ => {
         compressor.compressWithFile(filePath, tag, this, next)
@@ -45,8 +58,9 @@ function dataParser(tag) {
       })
   }; 
 
-  function getMeaningFull(data) {
+  function getData(data) {
     if(Array.isArray(data)) {
+      //case of CSV
       return data[0];
     } else {
       return data.toString();
@@ -57,6 +71,7 @@ function dataParser(tag) {
 
 module.exports = {
   getReadableStream: getReadableStream,
+  pushIntoStream: pushIntoStream,
   csvParser: csvParser,
   dataParser: dataParser
 }

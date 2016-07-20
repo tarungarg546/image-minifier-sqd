@@ -13,20 +13,26 @@ const got = require('got'),
                     imageminGifsicle()
                   ],
       path = require('path'),
-      serverLocation = server.protocol + '://' + server.hostname + ':' + server.port + server.buildPath,
+      buildLocation = server.protocol + '://' + server.hostname + ':' + server.port + server.buildPath,
       distDir = server.buildPath + server.buildDist;
 
 function compressImage(filePath, tag, stream, next) {
+  
+  function convertIntoServerLocation(fileName) {
+    return buildLocation + fileName + '\n'
+  }
+
   return imagemin([filePath], path.resolve(__dirname,`..${distDir}`),{
     plugins: imageminOptions
   })
   .then(file => {
     console.log(`Compressed and saved at location ${file[0].path}`);
     const fileName = file[0].path.split('\\').pop();
-    stream.push(serverLocation + fileName + '\n');
+    stream.push(convertIntoServerLocation(fileName));
     next();
   })
   .catch(console.error);
+  
 }
 
 module.exports = {
