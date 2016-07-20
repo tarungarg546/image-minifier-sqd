@@ -110,7 +110,7 @@ class App {
       window.open(`/${response}.${type}`,'_blank');*/
     })
     .then(result => {
-      window.open(`${result.target}.${type}`,'_blank');
+      window.open(`${result.target}.csv`,'_blank');
     })
     .catch(err => console.log(JSON.stringify(err)))
   }
