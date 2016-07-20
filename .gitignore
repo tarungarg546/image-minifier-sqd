@@ -1,8 +1,11 @@
-#upload directory
-uploads
+#build directory
+build
 
-#static build
-static/build
+#Tmp
+static/tmp
+
+#Images
+static/images
 #csv
 *.csv
 # Logs

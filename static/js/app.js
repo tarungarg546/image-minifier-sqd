@@ -99,37 +99,18 @@ class App {
       }
       return formData;
     }
-
-    fetch(`/submit/${node.dataset.target}`,{
+    const type = node.dataset.target;
+    fetch(`/submit/${type}`,{
       method:'POST',
-      body: __getData(node.dataset.target)
+      body: __getData(type)
     })
     .then(response => {
-      let decoder = new TextDecoder();
-      // response.body is a readable stream.
-      // Calling getReader() gives us exclusive access to
-      // the stream's content
-      let reader = response.body.getReader();
-      let bytesReceived = 0;
-      reader.read().then(function processResult(result) {
-        // Result objects contain two properties:
-        // done  - true if the stream has already given
-        //         you all its data.
-        // value - some data. Always undefined when
-        //         done is true.
-        if (result.done) {
-          console.log("Fetch complete");
-          location.reload();
-          return;
-        }
-        // result.value for fetch streams is a Uint8Array
-        console.log(
-            decoder.decode(result.value, {stream: true})
-          );
-
-        // Read some more, and call this function again
-        return reader.read().then(processResult);
-      });
+      return response.json();
+      /*console.log(response);
+      window.open(`/${response}.${type}`,'_blank');*/
+    })
+    .then(result => {
+      window.open(`${result.target}.${type}`,'_blank');
     })
     .catch(err => console.log(JSON.stringify(err)))
   }
