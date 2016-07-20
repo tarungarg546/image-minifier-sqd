@@ -8,8 +8,11 @@ const express = require("express"),
 app.get('/',(req, res) => res.render('index'));
 
 
+//Request a image on own server
 app.get('/image/:path',(req, res) => res.sendFile(path.resolve(__dirname,'static/images/' + decodeURIComponent(req.params.path))));
-
+//Request an build image
+app.get('/build/:name',(req,res) => res.sendFile(path.resolve(__dirname,'build/dist/' + decodeURIComponent(req.params.name))));
+//Request the final csv file of compressed image's url
 app.get('/:name',(req, res) => res.sendFile(path.resolve(__dirname,'build/tmp/' + decodeURIComponent(req.params.name))))
 
 app.use('/submit',handleData);
