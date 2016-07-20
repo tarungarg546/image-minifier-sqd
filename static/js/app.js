@@ -95,7 +95,6 @@ class App {
       }
 
       for(const iter of values) {
-          console.log(iter)
           formData.append('data', iter);
       }
       return formData;
@@ -120,18 +119,19 @@ class App {
         //         done is true.
         if (result.done) {
           console.log("Fetch complete");
+          location.reload();
           return;
         }
-        var date = new Date();
         // result.value for fetch streams is a Uint8Array
         console.log(
-            decoder.decode(result.value, {stream: true}) + date
+            decoder.decode(result.value, {stream: true})
           );
 
         // Read some more, and call this function again
         return reader.read().then(processResult);
       });
-    });
+    })
+    .catch(err => console.log(JSON.stringify(err)))
   }
 }
 

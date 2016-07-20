@@ -5,58 +5,88 @@ const path = require('path');
 const log = console.log.bind();
 const app = require('./config/express').init(express);
 const fs = require('fs');
+const handleData = require('./routes/postData');
+
 const multer = require('multer');
-const upload = multer({ dest: 'static/uploads/' })
-const csv = require('csv-streamify');
+const upload = multer({ dest: 'static/tmp/' });
+const csv = require('fast-csv');
 const Transform = require('stream').Transform;
-const csvParser = csv();
 const got = require('got');
 const imagemin = require('imagemin');
 const imageminMozjpeg = require('imagemin-mozjpeg');
 const imageminPngquant = require('imagemin-pngquant');
 const imageminSvgo = require('imagemin-svgo');
 const imageminGifsicle = require('imagemin-gifsicle');
-
+const imageminOptions = [
+                    imageminMozjpeg(),
+                    imageminPngquant({speed: 10}),
+                    imageminSvgo(),
+                    imageminGifsicle()
+                  ];
 app.get('/',(req, res) => res.render('index'));
-app.get('/image/:name',(req,res)=> {
-  const name=decodeURIComponent(req.params.name);
-  res.sendFile(path.resolve(__dirname,'static/images/'+name));
+app.get('/image/:path',(req, res) => {
+  const imagePath = path.resolve(__dirname,'static/images/' + decodeURIComponent(req.params.path));
+  res.sendFile(imagePath,'binary');
 });
+function csvParser() {
+  log(`\nCreating CSV Parser...`);
+  const csvParser = csv();
+  return csvParser;
+}
 
-var parser = new Transform({objectMode: true});
-parser._transform = function(data, encoding, done) {
-  const link = data.toString().slice(2,-3);
-  const date = new Date();
-  console.log(link.split('\\'))
-  const fileName = date.getTime()+ '.' +link.split( '/' ).pop(),
-        filePath = path.resolve(__dirname,`uploads/src/${fileName}`);
-  got.stream(link)
-  .pipe(fs.createWriteStream(filePath,{flags:'a'}))
-  .on('close',_ => {
-    imagemin([filePath],'static/build',{
-      plugins: [
-        imageminMozjpeg(),
-        imageminPngquant(),
-        imageminSvgo(),
-        imageminGifsicle()
-      ]
-    }).then(file => {
-      console.log(file);
-      this.push(link);
-      done(); 
-    }); 
-  });
-  
-};
+function dataParser() {
+  log(`\nCreating Data Parser...`);
+  const parser = new Transform({objectMode: true});
+  let count = 0;
+  parser._transform = function(data, encoding, next) {
+    const link = data[0];
+    const date = new Date();
+    const fileName = date.getTime()+ '.' +link.split( '/' ).pop(),
+          filePath = path.resolve(__dirname,`build/src/${fileName}`);
+    console.log(link)
+    got.stream(link)
+      .pipe(fs.createWriteStream(filePath,{flags: 'a'}))
+      .on('close', _ => {
+        compressImage(filePath,this,next)
+        .then(_ => {
+          log(count++);
+        })
+        .catch(console.error);
+      })
+      .on('error', err=> {
+        log(`\n${JSON.stringify(err)}`);
+        next();
+      })
+  }; 
+
+  return parser; 
+}
+
+function compressImage(filePath, stream, next) {
+  return imagemin([filePath], 'build/dest',{
+    plugins: imageminOptions
+  })
+  .then(file => {
+    log(`Compressed and saved at location ${file[0].path}`);
+    stream.push(file[0].path);
+    next();
+  })
+  .catch(console.error);
+}
+
 
 app.post('/submit/csv',upload.array('data'),(req, res) => {
-  var stream = fs.createReadStream(path.resolve(__dirname,req.files[0].path));
-
-  stream.pipe(csvParser)
-    .pipe(parser)
-    .pipe(res);
+  log(`\n Processing...`)
+  var stream = fs.createReadStream(path.resolve(__dirname,req.files[0].path))
+    .pipe(csvParser())
+    .pipe(dataParser())
+    .pipe(res)
+    .on('finish',_ => {
+      log(`\nFinished Processing!`);
+      res.end();
+    })
 
 });
 app.listen(app.get('port'), _ => {
-  log(`Server is listening at ${app.get('port')}`);
+  log(`\nServer is listening at ${app.get('port')}`);
 });
