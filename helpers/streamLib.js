@@ -9,6 +9,7 @@ const csv = require('fast-csv'),
       server = require('../config/server'),
       distDir = server.buildPath + server.buildDist,
       srcDir = server.buildPath + server.buildSrc,
+      buildDoc = server.buildPath + server.buildDoc,
       Transform = stream.Transform,
       Readable = stream.Readable;
 
@@ -21,6 +22,15 @@ function pushIntoStream(data) {
 
   data.forEach(datum =>  this.push(datum));
   this.push(null);//no more data
+
+}
+
+function dispatchStream(source, res, tag) {
+
+  source.pipe(fs.createWriteStream(path.resolve(__dirname, `..${buildDoc}/${tag}_doc.csv`), {flags: 'a'}))
+    .on('finish',_ => {
+      res.json({target: `${tag}_doc`});
+    });
 
 }
 function csvParser() {
@@ -72,6 +82,7 @@ function dataParser(tag, isPhysicalLocation) {
 module.exports = {
   getReadableStream: getReadableStream,
   pushIntoStream: pushIntoStream,
+  dispatchStream: dispatchStream,
   csvParser: csvParser,
   dataParser: dataParser
 }
