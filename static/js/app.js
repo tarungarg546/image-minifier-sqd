@@ -82,21 +82,6 @@ class App {
     if(node.nodeName !== 'BUTTON') 
       return ;
 
-    const type = node.dataset.target;
-    fetch(`/submit/${type}`,{
-      method:'POST',
-      body: __getData(type)
-    })
-    .then(response => {
-      return response.json();
-      /*console.log(response);
-      window.open(`/${response}.${type}`,'_blank');*/
-    })
-    .then(result => {
-      window.open(`${result.target}.csv`,'_blank');
-    })
-    .catch(err => console.log(JSON.stringify(err)))
-
     const __getData = function(target) {
       const input = document.querySelector(`#${target}`);
       let values, formData = new FormData();
@@ -114,6 +99,21 @@ class App {
       }
       return formData;
     }
+    
+    const type = node.dataset.target;
+    fetch(`/submit/${type}`,{
+      method:'POST',
+      body: __getData(type)
+    })
+    .then(response => {
+      return response.json();
+      /*console.log(response);
+      window.open(`/${response}.${type}`,'_blank');*/
+    })
+    .then(result => {
+      window.open(`${result.target}.csv`,'_blank');
+    })
+    .catch(err => console.log(JSON.stringify(err)))
   }
 }
 
