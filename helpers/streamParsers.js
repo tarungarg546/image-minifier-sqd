@@ -1,15 +1,21 @@
 'use strict';
 
 const csv = require('fast-csv'),
-      Transform = require('stream').Transform,
+      stream = require('stream'),
       compressor = require('./imageCompressor'),
       got = require('got'),
       fs = require('fs'),
       path = require('path'),
       server = require('../config/server'),
       distDir = server.buildPath + server.buildDist,
-      srcDir = server.buildPath + server.buildSrc;
+      srcDir = server.buildPath + server.buildSrc,
+      Transform = stream.Transform,
+      Readable = stream.Readable;
 
+
+function getReadableStream() {
+  return Readable();
+}
 function csvParser() {
   console.log(`\nCreating CSV Parser...`);
   const csvParser = csv();
@@ -21,8 +27,9 @@ function dataParser(tag) {
   const parser = new Transform({objectMode: true});
   
   parser._transform = function(data, encoding, next) {
-    console.log(data)
-    const link = data[0];
+
+    const link = getMeaningFull(data);
+    
     const fileName = tag + '.' + link.split( '/' ).pop(),
           filePath = path.resolve(__dirname, `..${srcDir}/${fileName}`);
 
@@ -38,10 +45,18 @@ function dataParser(tag) {
       })
   }; 
 
+  function getMeaningFull(data) {
+    if(Array.isArray(data)) {
+      return data[0];
+    } else {
+      return data.toString();
+    }
+  }
   return parser; 
 }
 
 module.exports = {
+  getReadableStream: getReadableStream,
   csvParser: csvParser,
   dataParser: dataParser
 }
