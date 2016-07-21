@@ -4,7 +4,8 @@ const express = require('express'),
       fs = require('fs'),
       path = require('path'),
       streamLib = require('../helpers/streamLib'),
-      uniqueTag = require('../helpers/generalPurpose').getUniqueTag;
+      uniqueTag = require('../helpers/generalPurpose').getUniqueTag,
+      dirtyCheck = require('../helpers/generalPurpose').dirtyCheck;
  
 const upload = require('../config/multer').init;
 
@@ -25,9 +26,17 @@ function handleMultipartFormData(key) {
 
 router.post('/csv', handleMultipartFormData('data'), (req, res) => {
   
+  const file = req.files[0];
+
+  if(dirtyCheck(file, 'csv')) {
+      return res.status(422).json({
+        cause: 'Please upload CSV file'
+      });
+  }
+
   const tag = req.uniqueTag,
-        csvFile = req.files[0],
-        stream = fs.createReadStream(csvFile.path);
+        stream = fs.createReadStream(file.path);
+
   const sourceStream = stream.pipe(streamLib.csvParser())
     .pipe(streamLib.dataParser(tag));
   streamLib.dispatchStream(sourceStream, res, tag);
@@ -36,17 +45,23 @@ router.post('/csv', handleMultipartFormData('data'), (req, res) => {
 
 router.post('/urls', handleMultipartFormData(), (req,res) => {
 
-  let urls = req.body.data,
-        tag = req.uniqueTag,
+  let urls = req.body.data;
+  if(!Array.isArray(urls)) {
+    urls = [urls];
+  }
+  
+  if(dirtyCheck(urls, 'url')){
+    return res.status(422).json({
+      cause: 'Please enter valid web uri'
+    })
+  }
+  const tag = req.uniqueTag,
         readableStream = streamLib.getReadableStream();
 
   const sourceStream = readableStream.pipe(streamLib.dataParser(tag));
   
   streamLib.dispatchStream(sourceStream, res, tag);
   //console.log(typeof urls);
-  if(!Array.isArray(urls)) {
-    urls = [urls];
-  }
   
   streamLib.pushIntoStream.call(readableStream, urls);
 
@@ -54,8 +69,15 @@ router.post('/urls', handleMultipartFormData(), (req,res) => {
 
 router.post('/img', handleMultipartFormData('data'), (req, res) => {
 
-  const locations = req.file_locations,
-        tag = req.uniqueTag,
+  const file_locations = req.file_locations;
+
+  if(dirtyCheck(file_locations, 'img')) {
+    return res.status(422).json({
+      cause: 'Please upload valid images'
+    });
+  }
+
+  const tag = req.uniqueTag,
         readableStream = streamLib.getReadableStream();
 
 

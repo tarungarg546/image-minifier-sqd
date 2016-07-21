@@ -115,7 +115,7 @@ class App {
     })
     .then(response => {
       if(!response || response.status !== 200 ||response.type !==  'basic') {
-        throw 'Error';
+        throw new Error("Please supply valid inputs.");
       }
       return response.json();
     })
@@ -123,9 +123,9 @@ class App {
       window.open(result.target);
       location.reload();
     })
-    .catch(err => {
-      this._showToast('Error occured on server :o');
-      console.log(JSON.stringify(err))
+    .catch(error => {
+      this._showToast(error);
+      console.log(error);
     });
 
   }
@@ -137,7 +137,7 @@ class App {
       const target = document.querySelector(`#${type}`);
 
       if(type === 'csv') {
-        if(!target.files[0].name.match(/(\.csv)$/)) {
+        if(!target.files[0].name.slice(-4) !== '.csv') {
           //it's not a csv
           return true;
         }
@@ -152,6 +152,7 @@ class App {
         return true;
       }
     }
+    return true;
   }
 
   _showToast(msg) {
