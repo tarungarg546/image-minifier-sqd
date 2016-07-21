@@ -1,38 +1,15 @@
 'use strict';
 const express = require('express'),
       router = express.Router(),
-      multer = require('multer'),
-      streamLib = require('../helpers/streamLib'),
       fs = require('fs'),
       path = require('path'),
-      tags = [],
-      handlers = require('../helpers/generalPurpose');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    
-    const dir = path.resolve(__dirname, `../static/tmp/${req.uniqueTag}`);
-    try {
-      fs.mkdirSync(dir);
-    } catch(e) {
-      if ( e.code != 'EEXIST' ) throw e;
-    }
-    req.file_dir = dir;
-    cb(null, dir);
-  
-  },
-
-  filename: function (req, file, cb) {
-    handlers.cacheLocations(req, file);
-    cb(null, file.originalname);
-  }
-
-});
+      streamLib = require('../helpers/streamLib'),
+      uniqueTag = require('../helpers/generalPurpose').getUniqueTag;
  
-const upload = multer({ storage: storage });
+const upload = require('../config/multer').init;
 
 router.use(function(req, res, next) {
-  req.uniqueTag = handlers.getUniqueTag();
+  req.uniqueTag = uniqueTag();
   next();
 });
 

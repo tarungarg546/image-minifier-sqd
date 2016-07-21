@@ -29,6 +29,7 @@ function dispatchStream(source, res, tag) {
 
   source.pipe(fs.createWriteStream(path.resolve(__dirname, `..${buildDoc}/${tag}_doc.csv`), {flags: 'a'}))
     .on('finish',_ => {
+      console.log(`\nFinished Compressing`);
       res.json({target: `${tag}_doc`});
     });
 
