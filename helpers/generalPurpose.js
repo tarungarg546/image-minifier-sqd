@@ -28,12 +28,12 @@ function cacheLocations(req, file) {
 }
 
 function mkdir(...dirs) {
-  console.log(`Making these folder ${dirs}`);
   dirs.forEach(dir => {
     try {
       fs.mkdirSync(dir);
+      console.log(`Making folder ${dir}`);
     } catch(e) {
-      if ( e.code != 'EEXIST' ) console.log (e);
+      if ( e.code != 'EEXIST' ) console.error (e);
     }
   });
 }

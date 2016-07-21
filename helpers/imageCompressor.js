@@ -33,7 +33,12 @@ function compressImage(filePath, tag, stream, next) {
     
     next();
   })
-  .catch(console.error);
+  .catch(err => {
+    
+    stream.push("Error occured in converting image named "+ filePath.split('/').pop() + '\n');
+    next();
+
+  });
   
 }
 

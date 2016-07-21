@@ -71,7 +71,7 @@ body{
   z-index: -1;
 }
 
-.tab-content__file-input + label , button{
+.tab-content__file-input + label , .submit{
   color: rgba(138, 43, 226, 1);
   background-color: rgba(255,255,255,0.8);
   max-width: 80%;
@@ -114,4 +114,22 @@ body{
   font-weight: 500;
   font-size: 30px;
   line-height: 40px;
+}
+
+/*
+  Toast
+ */
+.toast {
+  font-size: 25px;
+  right: 75px;
+  position: absolute;
+  top: 200px;
+  height: 50px;
+  background: black;
+  color: white;
+  transition: top 1s;
+  width: 335px;
+  opacity: 0.8;
+  border: 1px solid transparent;
+  border-radius: 20px;
 }

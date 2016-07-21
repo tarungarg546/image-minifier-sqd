@@ -39,7 +39,9 @@ function dispatchStream(source, res, tag) {
         target: tag + '/document.csv',
       });
     })
-    .on('error', err => console.error)
+    .on('error', err => {
+      res.status(500).json({error: JSON.stringify(err)});
+    })
 ;
 }
 function csvParser() {

@@ -7,6 +7,7 @@ class App {
     this._showTab = this._showTab.bind(this);
     this._submit = this._submit.bind(this);
     this._handleFileInput = this._handleFileInput.bind(this);
+    this._dirtyChecking = this._dirtyChecking.bind(this);
 
     this._showTab(this.tabContainer.querySelector('.tab-item--selected'));
     this._addEventListeners();
@@ -84,6 +85,11 @@ class App {
     if(node.nodeName !== 'BUTTON') 
       return ;
 
+    const type = node.dataset.target;
+    if(this._dirtyChecking(type)) {
+      this._showToast();
+      return ;
+    }
     const __getData = function(target) {
       const input = document.querySelector(`#${target}`);
       let values, formData = new FormData();
@@ -91,6 +97,7 @@ class App {
       formData.append('type', target);
 
       if(target !== 'urls') {
+        if(target )
         values = input.files;
       } else {
         values = input.value.split(";");
@@ -102,21 +109,62 @@ class App {
       return formData;
     }
     
-    const type = node.dataset.target;
-    
     fetch(`/submit/${type}`,{
       method:'POST',
       body: __getData(type)
     })
     .then(response => {
+      if(!response || response.status !== 200 ||response.type !==  'basic') {
+        throw 'Error';
+      }
       return response.json();
     })
     .then(result => {
       window.open(result.target);
       location.reload();
     })
-    .catch(err => console.log(JSON.stringify(err)));
+    .catch(err => {
+      this._showToast('Error occured on server :o');
+      console.log(JSON.stringify(err))
+    });
+
+  }
+
+  _dirtyChecking(type) {
+    if(type === 'urls') {
+      return false;
+    } else {
+      const target = document.querySelector(`#${type}`);
+
+      if(type === 'csv') {
+        if(!target.files[0].name.match(/(\.csv)$/)) {
+          //it's not a csv
+          return true;
+        }
+      } else {
+        const files = Array.from(target.files);
+        const flag = files.every(file => file.name.match(/\.(jpg|jpeg|png|gif|svg)$/));
+
+        if(flag) {
+          //correct
+          return false;
+        } 
+        return true;
+      }
+    }
+  }
+
+  _showToast(msg) {
+
+    const toast = document.createElement('button');
+    toast.textContent = msg || 'Please give valid inputs.';
+    toast.classList.add('toast');
     
+    setTimeout(function() {
+      document.body.removeChild(toast);
+    },2000);
+
+    document.body.append(toast);
   }
 }
 
