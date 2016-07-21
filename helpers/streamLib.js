@@ -11,7 +11,8 @@ const csv = require('fast-csv'),
       srcDir = server.buildPath + server.buildSrc,
       buildDoc = server.buildPath + server.buildDoc,
       Transform = stream.Transform,
-      Readable = stream.Readable;
+      Readable = stream.Readable,
+      mkdir = require('./generalPurpose').mkdir;
 
 
 function getReadableStream() {
@@ -27,20 +28,28 @@ function pushIntoStream(data) {
 
 function dispatchStream(source, res, tag) {
 
-  source.pipe(fs.createWriteStream(path.resolve(__dirname, `..${buildDoc}/${tag}_doc.csv`), {flags: 'a'}))
+  const folder = path.resolve(__dirname,'..' + buildDoc + tag);
+  mkdir(folder);
+  
+  source.pipe(fs.createWriteStream(folder + '/document.csv', {flags: 'a'}))
     .on('finish',_ => {
       console.log(`\nFinished Compressing`);
-      res.json({target: `${tag}_doc`});
+      res.json({
+        target: tag + '/document.csv',
+      });
     });
 
 }
 function csvParser() {
+
   console.log(`\nCreating CSV Parser...`);
   const csvParser = csv();
   return csvParser;
+
 }
 
 function dataParser(tag, isPhysicalLocation) {
+
   console.log(`\nCreating Data Parser...`);
   const parser = new Transform({objectMode: true});
   
@@ -48,15 +57,19 @@ function dataParser(tag, isPhysicalLocation) {
 
     const link = getData(data);
     
-    const fileName = tag + '.' + link.split( '/' ).pop(),
-          filePath = path.resolve(__dirname, `..${srcDir}/${fileName}`);
-
+    const fileName = link.split( '/' ).pop(),
+          folderPath = path.resolve(__dirname, '..' + srcDir + tag),
+          filePath = folderPath + '/' + fileName;
     let stream;
+
+    mkdir(folderPath);
+
     if(isPhysicalLocation) {
       stream = fs.createReadStream(link);
     } else {
       stream = got.stream(link);
     }
+
     stream
       .pipe(fs.createWriteStream(filePath, {flags: 'a'}))
       .on('close', _ => {
@@ -66,7 +79,8 @@ function dataParser(tag, isPhysicalLocation) {
       .on('error', err=> {
         console.log(`\n${JSON.stringify(err)}`);
         next();
-      })
+      });
+
   }; 
 
   function getData(data) {
@@ -77,6 +91,7 @@ function dataParser(tag, isPhysicalLocation) {
       return data.toString();
     }
   }
+
   return parser; 
 }
 

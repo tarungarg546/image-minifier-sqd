@@ -22,13 +22,15 @@ function compressImage(filePath, tag, stream, next) {
     return buildLocation + fileName + '\n'
   }
 
-  return imagemin([filePath], path.resolve(__dirname,`..${distDir}`),{
+  return imagemin([filePath], path.resolve(__dirname, '..' + distDir + tag),{
     plugins: imageminOptions
   })
   .then(file => {
+
     console.log(`Compressed and saved at location ${file[0].path}`);
     const fileName = file[0].path.split('\\').pop();
     stream.push(convertIntoServerLocation(fileName));
+    
     next();
   })
   .catch(console.error);

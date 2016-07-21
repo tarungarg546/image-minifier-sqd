@@ -9,14 +9,18 @@ const express = require('express'),
 const upload = require('../config/multer').init;
 
 router.use(function(req, res, next) {
+
   req.uniqueTag = uniqueTag();
   next();
+
 });
 
 function handleMultipartFormData(key) {
+
   if(!key)
     return upload.any();
   return upload.array('data');
+
 }
 
 router.post('/csv', handleMultipartFormData('data'), (req, res) => {

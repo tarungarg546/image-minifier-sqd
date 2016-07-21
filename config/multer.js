@@ -1,18 +1,14 @@
 'use strict';
 
 const multer = require('multer'),
-      fs = require('fs'),
       path = require('path'),
       cache = require('../helpers/generalPurpose').cacheLocations,
+      mkdir = require('../helpers/generalPurpose').mkdir,
       storage = multer.diskStorage({
         destination: function (req, file, cb) {
     
           const dir = path.resolve(__dirname, `../static/tmp/${req.uniqueTag}`);
-          try {
-            fs.mkdirSync(dir);
-          } catch(e) {
-            if ( e.code != 'EEXIST' ) throw e;
-          }
+          mkdir(dir);
           req.file_dir = dir;
           cb(null, dir);
         

@@ -6,7 +6,7 @@ module.exports = {
   static: '/static',
   renderEngine: 'ejs',
   buildPath: '/build/',
-  buildDist: 'dist',// it is relative to buildpath
-  buildSrc: 'src', // we'll need to manually create them in server too
-  buildDoc: 'tmp'
+  buildDist: 'dist/',// it is relative to buildpath
+  buildSrc: 'src/', 
+  buildDoc: 'doc/'
 }

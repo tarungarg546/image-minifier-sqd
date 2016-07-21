@@ -1,7 +1,8 @@
 'use strict';
 
-const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVXYZ';
-const tags = [];
+const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVXYZ',
+      tags = [],
+      fs = require('fs');
 
 function init() {
   for(let i=0;i<25;i++) {
@@ -25,7 +26,18 @@ function cacheLocations(req, file) {
 
 }
 
+function mkdir(...dirs) {
+  console.log(`Making these folder ${dirs}`);
+  dirs.forEach(dir => {
+    try {
+      fs.mkdirSync(dir);
+    } catch(e) {
+      if ( e.code != 'EEXIST' ) console.log (e);
+    }
+  });
+}
 module.exports = {
   cacheLocations: cacheLocations,
-  getUniqueTag: getUniqueTag
+  getUniqueTag: getUniqueTag,
+  mkdir: mkdir
 }
