@@ -53,7 +53,6 @@ body{
  */
 
 .tab-content {
-  left: 12%;
   transform: translateX(-100vw);
   position: absolute;
 }
@@ -62,7 +61,7 @@ body{
   transform: translateX(0);
 }
 
-.input__file {
+.tab-content__file-input {
   width: 0.1px;
   height: 0.1px;
   opacity: 0;
@@ -71,7 +70,7 @@ body{
   z-index: -1;
 }
 
-.input__file + label , button{
+.tab-content__file-input + label , button{
   color: rgba(138, 43, 226, 1);
   background-color: rgba(255,255,255,0.8);
   max-width: 80%;
@@ -84,21 +83,21 @@ body{
   padding: 0.625rem 1.25rem;
 }
 
-.input__file + label:hover {
+.tab-content__file-input + label:hover {
   background-color: rgba(138, 43, 226, 1);
   color: rgba(255,255,255,0.8);
 }
 
-.input__file:focus + label {
+.tab-content__file-input:focus + label {
   outline: 1px dotted #000;
   outline: -webkit-focus-ring-color auto 5px;
 }
 
-.input__file + label * {
+.tab-content__file-input + label * {
   pointer-events: none;
 }
 
-.input__file + label svg {
+.tab-content__file-input + label svg {
   width: 1em;
   height: 1em;
   vertical-align: middle;
@@ -109,7 +108,7 @@ body{
   /* 4px */
 }
 
-.description {
+.tab-content__description {
   color: aliceblue;
   font-weight: 500;
   font-size: 30px;

@@ -103,6 +103,7 @@ class App {
     }
     
     const type = node.dataset.target;
+    
     fetch(`/submit/${type}`,{
       method:'POST',
       body: __getData(type)
@@ -114,7 +115,8 @@ class App {
       window.open(result.target);
       location.reload();
     })
-    .catch(err => console.log(JSON.stringify(err)))
+    .catch(err => console.log(JSON.stringify(err)));
+    
   }
 }
 
