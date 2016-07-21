@@ -36,13 +36,17 @@ router.post('/csv', handleMultipartFormData('data'), (req, res) => {
 
 router.post('/urls', handleMultipartFormData(), (req,res) => {
 
-  const urls = req.body.data,
+  let urls = req.body.data,
         tag = req.uniqueTag,
         readableStream = streamLib.getReadableStream();
 
   const sourceStream = readableStream.pipe(streamLib.dataParser(tag));
   
   streamLib.dispatchStream(sourceStream, res, tag);
+  //console.log(typeof urls);
+  if(!Array.isArray(urls)) {
+    urls = [urls];
+  }
   
   streamLib.pushIntoStream.call(readableStream, urls);
 

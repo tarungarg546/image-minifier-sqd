@@ -1,4 +1,4 @@
-body , :after, :before {
+body{
   font-family: Arial;
   box-sizing: border-box;
   background: rgba(138, 43, 226, 1);
@@ -11,22 +11,25 @@ body , :after, :before {
   width: 100%;
 }
 
+:after, :before {
+  box-sizing: border-box;
+}
+
 .container {
   margin-left: 10%;
   margin-right: 10%;
   position: relative;
-
 }
  
 /*
   Tabs styling start
  */
-nav ul {
+.tab-list {
   list-style: none;
   font-weight: bold;
   text-align: center;
 }
-nav .tab-list li {
+.tab-item {
   padding: 1px;
   color: rgba(255,255,255,0.8);
   cursor: pointer;
@@ -36,11 +39,11 @@ nav .tab-list li {
   display: inline-block;
 }
 
-.active {
+.tab-item--selected {
   border-bottom: 5px solid rgba(255,255,255,0.8);
 }
 
-nav .tab-list li:active{
+.tab-item:active{
   padding: 0px;
   border: 1px solid white;
 }
@@ -54,11 +57,12 @@ nav .tab-list li:active{
   transform: translateX(-100vw);
   position: absolute;
 }
-.show {
+
+.tab-content--show {
   transform: translateX(0);
 }
 
-.inputFile {
+.input__file {
   width: 0.1px;
   height: 0.1px;
   opacity: 0;
@@ -67,7 +71,7 @@ nav .tab-list li:active{
   z-index: -1;
 }
 
-.inputFile + label , button{
+.input__file + label , button{
   color: rgba(138, 43, 226, 1);
   background-color: rgba(255,255,255,0.8);
   max-width: 80%;
@@ -80,21 +84,21 @@ nav .tab-list li:active{
   padding: 0.625rem 1.25rem;
 }
 
-.inputFile + label:hover {
+.input__file + label:hover {
   background-color: rgba(138, 43, 226, 1);
   color: rgba(255,255,255,0.8);
 }
 
-.inputFile:focus + label {
+.input__file:focus + label {
   outline: 1px dotted #000;
   outline: -webkit-focus-ring-color auto 5px;
 }
 
-.inputFile + label * {
+.input__file + label * {
   pointer-events: none;
 }
 
-.inputFile + label svg {
+.input__file + label svg {
   width: 1em;
   height: 1em;
   vertical-align: middle;

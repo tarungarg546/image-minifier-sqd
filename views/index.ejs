@@ -13,14 +13,14 @@
   <div class="container">
     <!--Tab list-->
     <nav>
-      <ul class='tab-list'>
-        <li class="active" data-content='csv-upload'>
+      <ul class='js-tabs tab-list'>
+        <li class="js-tab-item tab-item tab-item--selected" data-content='csv-upload'>
           Upload CSV
         </li>
-        <li data-content='image-upload'>
+        <li class="js-tab-item tab-item" data-content='image-upload'>
           Upload Images
         </li>
-        <li data-content='image-url'>
+        <li class="js-tab-item tab-item" data-content='image-url'>
           Submit Image urls
         </li>
       </ul>
@@ -35,7 +35,7 @@
 
       <div class="input">
 
-        <input type="file" name="csv" id="csv" class="inputFile csv" />
+        <input type="file" name="csv" id="csv" class="js-file input__file csv" />
         <label for="csv">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg>
           <span>&nbsp; Choose a CSV file&hellip;</span>
@@ -43,7 +43,7 @@
 
       </div><br>  
 
-      <button type="submit" class="submit" data-target='csv'>
+      <button type="submit" class="js-submit submit" data-target='csv'>
         Submit
       </button>
 
@@ -59,7 +59,7 @@
 
       <div class="input">
 
-        <input type="file" name="img" id="img" class="inputFile img" data-multiple-caption="{count} files selected" multiple/>
+        <input type="file" name="img" id="img" class="input__file js-file img" data-multiple-caption="{count} files selected" multiple/>
         <label for="img">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg>
           <span>&nbsp; Choose images&hellip;</span></label>
@@ -67,7 +67,7 @@
 
       </div><br> 
 
-      <button type="submit" class="submit" data-target='img'>
+      <button type="submit" class="js-submit submit" data-target='img'>
         Submit
       </button>
 
@@ -88,7 +88,7 @@
 
       </div> 
 
-      <button type="submit" class="submit" data-target='urls'>
+      <button type="submit" class="js-submit submit" data-target='urls'>
         Submit
       </button>
 

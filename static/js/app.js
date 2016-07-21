@@ -1,14 +1,14 @@
 class App {
   constructor() {
-    this.tabContainer = document.querySelector('.tab-list');
-    this.fileInputs = Array.from(document.querySelectorAll('.inputFile'));
-    this.submitButtons = Array.from(document.querySelectorAll('.submit'));
+    this.tabContainer = document.querySelector('.js-tabs');
+    this.fileInputs = Array.from(document.querySelectorAll('.js-file'));
+    this.submitButtons = Array.from(document.querySelectorAll('.js-submit'));
 
     this._showTab = this._showTab.bind(this);
     this._submit = this._submit.bind(this);
     this._handleFileInput = this._handleFileInput.bind(this);
 
-    this._showTab(this.tabContainer.querySelector('.active'));
+    this._showTab(this.tabContainer.querySelector('.tab-item--selected'));
     this._addEventListeners();
   }
 
@@ -35,22 +35,24 @@ class App {
       return ;
     }
 
-    const tabList = Array.from(this.tabContainer.querySelectorAll('li'));
+    const tabList = Array.from(this.tabContainer.querySelectorAll('.js-tab-item'));
     tabList.map(node => {
-      node.classList.remove('active');
+      if(node !== target)
+        node.classList.remove('tab-item--selected');
+      else if(!node.classList.contains('tab-item--selected')) {
+        node.classList.add('tab-item--selected');
+      }
     });
 
-
-    if(!target.classList.contains('active'))
-      target.classList.add('active');
-
+    target.classList.add('tab-item--selected');
+    
     const __showContent = function(target) {
       const contentList = Array.from(document.querySelectorAll('.tab-content'));
       contentList.map(node => {
         if(node !== target) {
-          node.classList.remove('show');
-        } else {
-          node.classList.add('show');
+          node.classList.remove('tab-content--show');
+        } else if(!node.classList.contains('tab-content--show')){
+          node.classList.add('tab-content--show');
         }
       });
 
@@ -109,7 +111,8 @@ class App {
       return response.json();
     })
     .then(result => {
-      window.open(result.target,'_blank');
+      window.open(result.target);
+      location.reload();
     })
     .catch(err => console.log(JSON.stringify(err)))
   }

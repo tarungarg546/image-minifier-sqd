@@ -31,15 +31,16 @@ function dispatchStream(source, res, tag) {
 
   const folder = pathResolve('..' + buildDoc + tag);
   mkdir(folder);
-
+  console.log(folder + '/document.csv');
   source.pipe(fs.createWriteStream(folder + '/document.csv', {flags: 'a'}))
     .on('finish',_ => {
       console.log(`\nFinished Compressing`);
       res.json({
         target: tag + '/document.csv',
       });
-    });
-
+    })
+    .on('error', err => console.error)
+;
 }
 function csvParser() {
 
