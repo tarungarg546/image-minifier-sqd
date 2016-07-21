@@ -1,9 +1,10 @@
-"use strict";
+'use strict';
 
 const express = require('express'),
-      path = require('path'),
+      pathResolve = require('path').resolve,
       app = require('./config/express').init(express),
       mkdir = require('./helpers/generalPurpose').mkdir,
+      decode = require('./helpers/generalPurpose').decode,
       serverConfig = require('./config/server'),
       buildDist = '.' + serverConfig.buildPath + serverConfig.buildDist,
       buildDoc = '.' + serverConfig.buildPath + serverConfig.buildDoc,
@@ -16,20 +17,34 @@ const express = require('express'),
                     ],
       handleData = require('./routes/postData');
 
-requiredDir.map(dir => {
-  return path.resolve(__dirname,dir);
-});
 //make required directories
 mkdir(...requiredDir);
 
 app.get('/',(req, res) => res.render('index'));
 
 //Request a image on own server
-app.get('/image/:path',(req, res) => res.sendFile(path.resolve(__dirname,'static/images/' + decodeURIComponent(req.params.path))));
+app.get('/image/:name',(req, res) => {
+
+  const filePath = pathResolve(__dirname, './static/images/' + decode(req.params.name));
+  return res.sendFile(filePath);
+
+});
+
 //Request an build image
-app.get('/build/:name',(req,res) => res.sendFile(path.resolve(__dirname, buildDist + decodeURIComponent(req.params.name))));
+app.get('/build/:tag/:name',(req,res) => {
+
+  const filePath = pathResolve(__dirname, buildDist + decode(req.params.tag) + '/' +decode(req.params.name));
+  return res.sendFile(filePath);
+
+});
+
 //Request the final csv file of compressed image's url
-app.get('/:tag/document.csv',(req, res) => res.sendFile(path.resolve(__dirname, buildDoc + decodeURIComponent(req.params.tag) + '/document.csv')))
+app.get('/:tag/document.csv',(req, res) => {
+
+  const filePath = pathResolve(__dirname, buildDoc + decode(req.params.tag) + '/document.csv');
+  res.sendFile(filePath);
+
+})
 
 app.use('/submit',handleData);
 

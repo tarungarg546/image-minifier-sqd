@@ -12,17 +12,17 @@ const got = require('got'),
                     imageminSvgo(),
                     imageminGifsicle()
                   ],
-      path = require('path'),
+      pathResolve = require('./generalPurpose').resolve,
       buildLocation = server.protocol + '://' + server.hostname + ':' + server.port + server.buildPath,
       distDir = server.buildPath + server.buildDist;
 
 function compressImage(filePath, tag, stream, next) {
   
   function convertIntoServerLocation(fileName) {
-    return buildLocation + fileName + '\n'
+    return buildLocation + tag + '/' + fileName + '\n'
   }
 
-  return imagemin([filePath], path.resolve(__dirname, '..' + distDir + tag),{
+  return imagemin([filePath], pathResolve('..' + distDir + tag),{
     plugins: imageminOptions
   })
   .then(file => {

@@ -2,7 +2,8 @@
 
 const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVXYZ',
       tags = [],
-      fs = require('fs');
+      fs = require('fs'),
+      pResolve = require('path').resolve;
 
 function init() {
   for(let i=0;i<25;i++) {
@@ -36,8 +37,20 @@ function mkdir(...dirs) {
     }
   });
 }
+
+function decode(input) {
+  return decodeURIComponent(input);
+}
+
+
+function resolve(target) {
+  return pResolve(__dirname,target);
+}
+
 module.exports = {
   cacheLocations: cacheLocations,
   getUniqueTag: getUniqueTag,
-  mkdir: mkdir
+  mkdir: mkdir,
+  decode: decode,
+  resolve: resolve
 }

@@ -12,7 +12,8 @@ const csv = require('fast-csv'),
       buildDoc = server.buildPath + server.buildDoc,
       Transform = stream.Transform,
       Readable = stream.Readable,
-      mkdir = require('./generalPurpose').mkdir;
+      mkdir = require('./generalPurpose').mkdir,
+      pathResolve = require('./generalPurpose').resolve;
 
 
 function getReadableStream() {
@@ -28,9 +29,9 @@ function pushIntoStream(data) {
 
 function dispatchStream(source, res, tag) {
 
-  const folder = path.resolve(__dirname,'..' + buildDoc + tag);
+  const folder = pathResolve('..' + buildDoc + tag);
   mkdir(folder);
-  
+
   source.pipe(fs.createWriteStream(folder + '/document.csv', {flags: 'a'}))
     .on('finish',_ => {
       console.log(`\nFinished Compressing`);
@@ -58,7 +59,7 @@ function dataParser(tag, isPhysicalLocation) {
     const link = getData(data);
     
     const fileName = link.split( '/' ).pop(),
-          folderPath = path.resolve(__dirname, '..' + srcDir + tag),
+          folderPath = pathResolve('..' + srcDir + tag),
           filePath = folderPath + '/' + fileName;
     let stream;
 
