@@ -58,6 +58,7 @@ body{
 }
 
 .tab-content--show {
+  transition: transform 0.1s ease;
   transform: translateX(0);
 }
 
