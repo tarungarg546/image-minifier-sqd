@@ -1,27 +1,34 @@
 class App {
   constructor() {
+    
+    //init variable
     this.tabContainer = document.querySelector('.js-tabs');
     this.fileInputs = Array.from(document.querySelectorAll('.js-file'));
     this.submitButtons = Array.from(document.querySelectorAll('.js-submit'));
 
+    //Bind functions with 'this'
     this._showTab = this._showTab.bind(this);
     this._submit = this._submit.bind(this);
     this._handleFileInput = this._handleFileInput.bind(this);
     this._dirtyChecking = this._dirtyChecking.bind(this);
 
+    //Run these functions on init
     this._showTab(this.tabContainer.querySelector('.tab-item--selected'));
     this._addEventListeners();
   }
 
   _addEventListeners() {
     
+    //Show a tab and hide other when there is click on child of tabContainer
     this.tabContainer.addEventListener('click',this._showTab);
 
+    //Attach event hadler for file inputs to show customized messages
     this.fileInputs.forEach(input => {
       let label  = input.nextElementSibling;
       input.addEventListener('change',this._handleFileInput);
     });
 
+    //After clickin on submit submit the form
     this.submitButtons.forEach(button => {
       const target = button.dataset.target;
       button.addEventListener('click',this._submit);
@@ -31,12 +38,14 @@ class App {
   }
 
   _showTab(evt) {
+    //If child or portion clicked is not tab then return
     const target = evt.target || evt;
     if(target.nodeName !== 'LI') {
       return ;
     }
 
     const tabList = Array.from(this.tabContainer.querySelectorAll('.js-tab-item'));
+    //Show current clicked tab and hide others
     tabList.map(node => {
       if(node !== target)
         node.classList.remove('tab-item--selected');
@@ -47,6 +56,7 @@ class App {
 
     target.classList.add('tab-item--selected');
     
+    //Show content of current tab and hide content of others
     const __showContent = function(target) {
       const contentList = Array.from(document.querySelectorAll('.tab-content'));
       contentList.map(node => {
@@ -92,6 +102,7 @@ class App {
       return ;
     }
 
+    //Get form data that should be sent to server
     const __getData = function(target) {
       const input = document.querySelector(`#${target}`);
       let values, formData = new FormData();
@@ -99,7 +110,7 @@ class App {
       formData.append('type', target);
 
       if(target !== 'urls') {
-        if(target )
+        //if its part of file input
         values = input.files;
       } else {
         values = input.value.split(";");
@@ -111,6 +122,7 @@ class App {
       return formData;
     }
     
+    //submit post
     fetch(`/submit/${type}`,{
       method:'POST',
       body: __getData(type)
@@ -132,6 +144,7 @@ class App {
 
   }
 
+  //Dirty check if input supplied is valid or not
   _dirtyChecking(type) {
     if(type === 'urls') {
       return false;
@@ -157,6 +170,7 @@ class App {
     return true;
   }
 
+  //Show toast in case of invalid input or error
   _showToast(msg) {
 
     const toast = document.createElement('button');

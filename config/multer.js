@@ -6,7 +6,7 @@ const multer = require('multer'),
       mkdir = require('../helpers/generalPurpose').mkdir,
       storage = multer.diskStorage({
         destination: function (req, file, cb) {
-    
+          //Destination in disk where files supplied by client will be stored
           const dir = path.resolve(__dirname, `../static/tmp/${req.uniqueTag}`);
           mkdir(dir);
           req.file_dir = dir;
@@ -15,6 +15,7 @@ const multer = require('multer'),
         },
 
         filename: function (req, file, cb) {
+          //filename by which they will be stored
           cache(req, file);
           cb(null, file.originalname);
         }
