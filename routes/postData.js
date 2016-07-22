@@ -9,13 +9,24 @@ const express = require('express'),
  
 const upload = require('../config/multer').init;
 
-router.use(function(req, res, next) {
+/**
+ * [middleware that appends a uniqueTag to every request coming on '/submit']
+ * @param  {Object} req   [Request object]
+ * @param  {Object} res   [Response object]
+ * @param  {function} next [Next function in routing chain
+ */
+router.use(function middleware(req, res, next) {
 
   req.uniqueTag = uniqueTag();
   next();
 
 });
 
+/**
+ * [handleMultipartFormData Middleware to handle multipart/form-encoded data]
+ * @param  {String} key [Key at which files are present in reequest]
+ * @return {Middleware}
+ */
 function handleMultipartFormData(key) {
 
   if(!key)
