@@ -16,16 +16,25 @@ const csv = require('fast-csv'),
       pathResolve = require('./generalPurpose').resolve;
 
 
+/**
+ * [getReadableStream Function to create a readable stream]
+ * @return {Stream} [Readable Stream]
+ */
 function getReadableStream() {
   return Readable();
 }
 
+/**
+ * [pushIntoStream Push data into readable stream specified by 'this']
+ * @param  {[String]} data [Data which needs to be pushed into readable stream]
+ */
 function pushIntoStream(data) {
 
   data.forEach(datum =>  this.push(datum));
   this.push(null);//no more data
 
 }
+
 
 function dispatchStream(source, res, tag) {
 
@@ -41,9 +50,14 @@ function dispatchStream(source, res, tag) {
     })
     .on('error', err => {
       res.status(500).json({error: JSON.stringify(err)});
-    })
-;
+    });
+
 }
+
+/**
+ * [csvParser Function that creates csv parsing stream]
+ * @return {Stream} [Stream of csv parser]
+ */
 function csvParser() {
 
   console.log(`\nCreating CSV Parser...`);
@@ -52,6 +66,12 @@ function csvParser() {
 
 }
 
+/**
+ * [dataParser Kind of transform stream that transform stream data coming into something that is usable for ur]
+ * @param  {String}  tag                [Unique tag for each request]
+ * @param  {Boolean} isPhysicalLocation [Whether specified input is from a physical Location, eg in case of image uploads]
+ * @return {Stream}                     [Modified stream]
+ */
 function dataParser(tag, isPhysicalLocation) {
 
   console.log(`\nCreating Data Parser...`);
@@ -87,6 +107,7 @@ function dataParser(tag, isPhysicalLocation) {
 
   }; 
 
+
   function getData(data) {
     if(Array.isArray(data)) {
       //case of CSV
@@ -99,6 +120,7 @@ function dataParser(tag, isPhysicalLocation) {
   return parser; 
 }
 
+//expose this file
 module.exports = {
   getReadableStream: getReadableStream,
   pushIntoStream: pushIntoStream,

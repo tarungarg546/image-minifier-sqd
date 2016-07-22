@@ -24,6 +24,11 @@ function getUniqueTag() {
 }
 
 
+/**
+ * [cacheLocations Cache the location on which files are stored on disk]
+ * @param  {Object} req  [Request Object]
+ * @param  {FileObject} file [File]
+ */
 function cacheLocations(req, file) {
 
   if(!req.file_locations) {

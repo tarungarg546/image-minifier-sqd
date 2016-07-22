@@ -16,6 +16,14 @@ const got = require('got'),
       buildLocation = server.protocol + '://' + server.hostname + ':' + server.port + server.buildPath,
       distDir = server.buildPath + server.buildDist;
 
+
+/**
+ * [compressImage Function that takes filePath and compresses it]
+ * @param  {String}   filePath [File path]
+ * @param  {String}   tag      [Unique tag generated earlier]
+ * @param  {Stream}   stream   [Stream that is coming from transform in streamLib]
+ * @param  {Function} next     [NExt function which will be called after consuming current stream]
+ */
 function compressImage(filePath, tag, stream, next) {
   
   function convertIntoServerLocation(fileName) {
@@ -42,6 +50,8 @@ function compressImage(filePath, tag, stream, next) {
   
 }
 
+
+//expose this file
 module.exports = {
   compressWithFile: compressImage
 }

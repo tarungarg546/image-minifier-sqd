@@ -86,10 +86,12 @@ class App {
       return ;
 
     const type = node.dataset.target;
+    
     if(this._dirtyChecking(type)) {
       this._showToast();
       return ;
     }
+
     const __getData = function(target) {
       const input = document.querySelector(`#${target}`);
       let values, formData = new FormData();
