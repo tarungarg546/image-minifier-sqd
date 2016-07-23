@@ -38,8 +38,8 @@ function compressImage(filePath, tag, stream, next) {
     console.log(`Compressed and saved at location ${file[0].path}`);
     const fileName = file[0].path.split('\\').pop();
     stream.push(convertIntoServerLocation(fileName));
-    
     next();
+    
   })
   .catch(err => {
     

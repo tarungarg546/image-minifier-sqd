@@ -183,7 +183,7 @@ class App {
       document.body.removeChild(toast);
     },2000);
 
-    document.body.append(toast);
+    document.body.appendChild(toast);
   }
 }
 
