@@ -116,9 +116,7 @@ class App {
         values = input.value.split(";");
       }
 
-      for(const iter of values) {
-          formData.append('data', iter);
-      }
+      values.forEach(value => formData.append('data', iter));
       return formData;
     }
     
