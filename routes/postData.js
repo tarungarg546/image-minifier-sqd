@@ -92,7 +92,7 @@ router.post('/img', handleMultipartFormData('data'), (req, res) => {
         readableStream = streamLib.getReadableStream();
 
 
-  var sourceStream = readableStream.pipe(streamLib.dataParser(tag,true))
+  var sourceStream = readableStream.pipe(streamLib.dataParser(tag, true))
   
   streamLib.dispatchStream(sourceStream ,res, tag);
 

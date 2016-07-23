@@ -29,7 +29,7 @@ function getReadableStream() {
  * @param  {[String]} data [Data which needs to be pushed into readable stream]
  */
 function pushIntoStream(data) {
-
+  
   data.forEach(datum =>  this.push(datum));
   this.push(null);//no more data
 

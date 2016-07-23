@@ -152,19 +152,21 @@ class App {
       const target = document.querySelector(`#${type}`);
 
       if(type === 'csv') {
-        if(!target.files[0].name.slice(-4) !== '.csv') {
+        console.log(target.files[0].name);
+        if(target.files[0].name.slice(-4) !== '.csv') {
           //it's not a csv
           return true;
         }
+        return false;
       } else {
         const files = Array.from(target.files);
         const flag = files.every(file => file.name.match(/\.(jpg|jpeg|png|gif|svg)$/));
 
-        if(flag) {
-          //correct
-          return false;
+        if(!flag) {
+          //incorrect
+          return true;
         } 
-        return true;
+        return false;
       }
     }
     return true;
