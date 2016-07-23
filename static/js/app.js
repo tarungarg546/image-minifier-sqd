@@ -111,7 +111,7 @@ class App {
 
       if(target !== 'urls') {
         //if its part of file input
-        values = input.files;
+        values = Array.from(input.files);
       } else {
         values = input.value.split(";");
       }
