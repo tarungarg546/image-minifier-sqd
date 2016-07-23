@@ -39,11 +39,11 @@ function compressImage(filePath, tag, stream, next) {
     const fileName = file[0].path.split('\\').pop();
     stream.push(convertIntoServerLocation(fileName));
     next();
-    
+
   })
   .catch(err => {
     
-    stream.push("Error occured in converting image named "+ filePath.split('/').pop() + '\n');
+    stream.push("Error occured in converting image named "+ filePath.split('\\').pop() + '\n');
     next();
 
   });

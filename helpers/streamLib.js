@@ -30,9 +30,10 @@ function getReadableStream() {
  */
 function pushIntoStream(data) {
   
-  data.forEach(datum =>  this.push(datum));
+  data.forEach(datum =>  {
+    this.push(datum);
+  });
   this.push(null);//no more data
-
 }
 
 
@@ -40,12 +41,11 @@ function dispatchStream(source, res, tag) {
 
   const folder = pathResolve('..' + buildDoc + tag);
   mkdir(folder);
-  console.log(folder + '/document.csv');
-  source.pipe(fs.createWriteStream(folder + '/document.csv', {flags: 'a'}))
+  source.pipe(fs.createWriteStream(folder + '\\document.csv', {flags: 'a'}))
     .on('finish',_ => {
       console.log(`\nFinished Compressing`);
       res.json({
-        target: tag + '/document.csv',
+        target: tag + '\\document.csv',
       });
     })
     .on('error', err => {
@@ -82,8 +82,8 @@ function dataParser(tag, isPhysicalLocation) {
     const link = getData(data);
     
     const fileName = link.split( '/' ).pop(),
-          folderPath = pathResolve('..' + srcDir + tag),
-          filePath = folderPath + '/' + fileName;
+          folderPath = pathResolve('..' + srcDir + tag + '/'),
+          filePath = folderPath + '\\' +fileName;
     let stream;
 
     mkdir(folderPath);

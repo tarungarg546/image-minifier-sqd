@@ -96,7 +96,7 @@ router.post('/img', handleMultipartFormData('data'), (req, res) => {
   
   streamLib.dispatchStream(sourceStream ,res, tag);
 
-  streamLib.pushIntoStream.call(readableStream, locations);
+  streamLib.pushIntoStream.call(readableStream, file_locations);
 
 });
 
