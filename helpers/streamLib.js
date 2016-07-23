@@ -97,6 +97,7 @@ function dataParser(tag, isPhysicalLocation) {
     stream
       .pipe(fs.createWriteStream(filePath, {flags: 'a'}))
       .on('close', _ => {
+        console.log('Compressing.... ', filePath.split('\\').pop())
         compressor.compressWithFile(filePath, tag, this, next)
         .catch(console.error);
       })

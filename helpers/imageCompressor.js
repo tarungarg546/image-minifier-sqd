@@ -2,15 +2,15 @@
 const got = require('got'),
       server = require('../config/server'),
       imagemin = require('imagemin'),
-      imageminMozjpeg = require('imagemin-mozjpeg'),
-      imageminPngquant = require('imagemin-pngquant'),
+      imageminPngcrush = require('imagemin-pngcrush'),
       imageminSvgo = require('imagemin-svgo'),
       imageminGifsicle = require('imagemin-gifsicle'),
+      imageminJpegtran = require('imagemin-jpegtran'),
       imageminOptions = [
-                    imageminMozjpeg(),
-                    imageminPngquant({speed: 10}),
-                    imageminSvgo(),
-                    imageminGifsicle()
+                    imageminJpegtran(), //working
+                    imageminPngcrush({reduce: true}), //working
+                    imageminSvgo(), //working
+                    imageminGifsicle() 
                   ],
       pathResolve = require('./generalPurpose').resolve,
       buildLocation = server.protocol + '://' + server.hostname + ':' + server.port + server.buildPath,
@@ -42,7 +42,7 @@ function compressImage(filePath, tag, stream, next) {
 
   })
   .catch(err => {
-    
+
     stream.push("Error occured in converting image named "+ filePath.split('\\').pop() + '\n');
     next();
 
