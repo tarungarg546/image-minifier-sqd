@@ -14,7 +14,9 @@ const got = require('got'),
                   ],
       pathResolve = require('./generalPurpose').resolve,
       buildLocation = server.protocol + '://' + server.hostname + ':' + server.port + server.buildPath,
-      distDir = server.buildPath + server.buildDist;
+      distDir = server.buildPath + server.buildDist,
+      errorLogger = require('./logger').error,
+      infoLogger = require('./logger').info;
 
 
 /**
@@ -35,14 +37,15 @@ function compressImage(filePath, tag, stream, next) {
   })
   .then(file => {
 
-    console.log(`Compressed and saved at location ${file[0].path}`);
+    infoLogger(`Compressed and saved at location ${file[0].path}`);
     const fileName = file[0].path.split('\\').pop();
     stream.push(convertIntoServerLocation(fileName));
     next();
 
   })
   .catch(err => {
-
+    
+    errorLogger("Error occured in converting image named "+ filePath.split('\\').pop());
     stream.push("Error occured in converting image named "+ filePath.split('\\').pop() + '\n');
     next();
 

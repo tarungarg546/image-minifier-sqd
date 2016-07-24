@@ -1,6 +1,9 @@
 #build directory
 build
 
+#SErver logs
+server.logs
+
 #Tmp
 static/tmp
 

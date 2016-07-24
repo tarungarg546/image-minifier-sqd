@@ -5,10 +5,9 @@ const express = require('express'),
       path = require('path'),
       streamLib = require('../helpers/streamLib'),
       uniqueTag = require('../helpers/generalPurpose').getUniqueTag,
-      dirtyCheck = require('../helpers/generalPurpose').dirtyCheck;
- 
-const upload = require('../config/multer').init;
-
+      dirtyCheck = require('../helpers/generalPurpose').dirtyCheck,
+      upload = require('../config/multer').init,
+      warnLogger = require('../helpers/logger').warn;
 /**
  * [middleware that appends a uniqueTag to every request coming on '/submit']
  * @param  {Object} req   [Request object]
@@ -40,6 +39,7 @@ router.post('/csv', handleMultipartFormData('data'), (req, res) => {
   const file = req.files[0];
 
   if(dirtyCheck(file, 'csv')) {
+      warnLogger('File supplied is not csv and its original name is '+ file.originalname);
       return res.status(422).json({
         cause: 'Please upload CSV file'
       });
@@ -62,6 +62,7 @@ router.post('/urls', handleMultipartFormData(), (req,res) => {
   }
   
   if(dirtyCheck(urls, 'url')){
+    warnLogger('Some/All urls supplied are not valid web uri');
     return res.status(422).json({
       cause: 'Please enter valid web uri'
     })
@@ -83,6 +84,7 @@ router.post('/img', handleMultipartFormData('data'), (req, res) => {
   const file_locations = req.file_locations;
 
   if(dirtyCheck(file_locations, 'img')) {
+    warnLogger('Some/All uploaded things are not valid images');
     return res.status(422).json({
       cause: 'Please upload valid images'
     });

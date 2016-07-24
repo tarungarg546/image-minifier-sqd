@@ -4,7 +4,9 @@ const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVXYZ',
       tags = [],
       fs = require('fs'),
       pResolve = require('path').resolve,
-      validUrl = require('valid-url');
+      validUrl = require('valid-url'),
+      infoLogger = require('./logger').info,
+      warnLogger = require('./logger').warn;
 
 function init() {
   for(let i=0;i<25;i++) {
@@ -46,9 +48,12 @@ function mkdir(...dirs) {
   dirs.forEach(dir => {
     try {
       fs.mkdirSync(dir);
-      console.log(`Making folder ${dir}`);
+      infoLogger(`Making folder ${dir}`);
     } catch(e) {
       if ( e.code != 'EEXIST' ) console.error (e);
+      else {
+        warnLogger(`${dir} directory exists, skipping it`);
+      }
     }
   });
 }

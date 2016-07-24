@@ -13,7 +13,9 @@ const csv = require('fast-csv'),
       Transform = stream.Transform,
       Readable = stream.Readable,
       mkdir = require('./generalPurpose').mkdir,
-      pathResolve = require('./generalPurpose').resolve;
+      pathResolve = require('./generalPurpose').resolve,
+      infoLogger = require('./logger').info,
+      errorLogger = require('./logger').error;
 
 
 /**
@@ -43,7 +45,7 @@ function dispatchStream(source, res, tag) {
   mkdir(folder);
   source.pipe(fs.createWriteStream(folder + '\\document.csv', {flags: 'a'}))
     .on('finish',_ => {
-      console.log(`\nFinished Compressing`);
+      infoLogger(`Finished Compressing`);
       res.json({
         target: tag + '\\document.csv',
       });
@@ -60,7 +62,7 @@ function dispatchStream(source, res, tag) {
  */
 function csvParser() {
 
-  console.log(`\nCreating CSV Parser...`);
+  infoLogger(`Creating CSV Parser...`);
   const csvParser = csv();
   return csvParser;
 
@@ -74,7 +76,7 @@ function csvParser() {
  */
 function dataParser(tag, isPhysicalLocation) {
 
-  console.log(`\nCreating Data Parser...`);
+  infoLogger(`Creating Data Parser...`);
   const parser = new Transform({objectMode: true});
   
   parser._transform = function(data, encoding, next) {
@@ -88,28 +90,28 @@ function dataParser(tag, isPhysicalLocation) {
 
     mkdir(folderPath);
 
-    console.log(`\n\nFetching image named ${fileName}`);
+    infoLogger(`Fetching image named ${fileName}`);
     if(isPhysicalLocation) {
       stream = fs.createReadStream(link)
         .on('error',err => {
-          console.log(`\nError occured in fetching image ${fileName} \n Error :- ${JSON.stringify(err)}`);
+          errorLogger(`Error occured in fetching image ${fileName}  Error :- ${JSON.stringify(err)}`);
         })
     } else {
       stream = got.stream(link)
         .on('error',err => {
-          console.log(`\nError occured in fetching image ${fileName} \n Error :- ${JSON.stringify(err)}`);
+          errorLogger(`Error occured in fetching image ${fileName}  Error :- ${JSON.stringify(err)}`);
         })
     }
 
     stream
       .pipe(fs.createWriteStream(filePath, {flags: 'a'}))
       .on('close', _ => {
-        console.log('Compressing.... ', filePath.split('\\').pop())
+        infoLogger('Compressing.... ', filePath.split('\\').pop())
         compressor.compressWithFile(filePath, tag, this, next)
         .catch(console.error);
       })
       .on('error', err=> {
-        console.log(`\n${JSON.stringify(err)}`);
+        errorLogger(`${JSON.stringify(err)}`);
         next();
       });
 
