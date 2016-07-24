@@ -88,10 +88,17 @@ function dataParser(tag, isPhysicalLocation) {
 
     mkdir(folderPath);
 
+    console.log(`\n\nFetching image named ${fileName}`);
     if(isPhysicalLocation) {
-      stream = fs.createReadStream(link);
+      stream = fs.createReadStream(link)
+        .on('error',err => {
+          console.log(`\nError occured in fetching image ${fileName} \n Error :- ${JSON.stringify(err)}`);
+        })
     } else {
-      stream = got.stream(link);
+      stream = got.stream(link)
+        .on('error',err => {
+          console.log(`\nError occured in fetching image ${fileName} \n Error :- ${JSON.stringify(err)}`);
+        })
     }
 
     stream

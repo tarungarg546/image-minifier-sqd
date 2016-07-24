@@ -119,7 +119,7 @@ class App {
       values.forEach(value => formData.append('data', value));
       return formData;
     }
-    
+    this._showToast('Compressing....', false);
     //submit post
     fetch(`/submit/${type}`,{
       method:'POST',
@@ -171,16 +171,26 @@ class App {
   }
 
   //Show toast in case of invalid input or error
-  _showToast(msg) {
+  _showToast(msg, remove) {
 
-    const toast = document.createElement('button');
+    //clean up previous mess
+    const prevToast = document.querySelector('.toast');
+    let toast;
+    if(prevToast === null) {
+      toast = document.createElement('button');
+    } else {
+      toast = prevToast;
+    }
+
     toast.textContent = msg || 'Please give valid inputs.';
-    toast.classList.add('toast');
+    if(!toast.classList.contains('.toast'))
+      toast.classList.add('toast');
     
-    setTimeout(function() {
-      document.body.removeChild(toast);
-    },2000);
-
+    if(remove === undefined || remove === true) {
+      setTimeout(function() {
+        document.body.removeChild(toast);
+      },2000);  
+    }
     document.body.appendChild(toast);
   }
 }
