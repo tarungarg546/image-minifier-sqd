@@ -3,6 +3,7 @@
 const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVXYZ',
       tags = [],
       fs = require('fs'),
+      path = require('path'),
       pResolve = require('path').resolve,
       validUrl = require('valid-url'),
       infoLogger = require('./logger').info,
@@ -36,7 +37,7 @@ function cacheLocations(req, file) {
   if(!req.file_locations) {
     req.file_locations = [];
   };
-  req.file_locations.push(req.file_dir + '/' + file.originalname);
+  req.file_locations.push(path.join(req.file_dir, file.originalname));
 
 }
 
@@ -145,6 +146,14 @@ function dirtyCheck(source, base) {
 }
 
 
+function getName(src) {
+  return path.basename(src);
+}
+
+function join(first, second) {
+  return path.join(first,second);
+}
+
 //Expose this file
 module.exports = {
   cacheLocations: cacheLocations,
@@ -152,5 +161,7 @@ module.exports = {
   mkdir: mkdir,
   decode: decode,
   resolve: resolve,
-  dirtyCheck: dirtyCheck
+  dirtyCheck: dirtyCheck,
+  join: join,
+  getName: getName
 }

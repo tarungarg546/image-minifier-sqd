@@ -15,8 +15,9 @@ const csv = require('fast-csv'),
       mkdir = require('./generalPurpose').mkdir,
       pathResolve = require('./generalPurpose').resolve,
       infoLogger = require('./logger').info,
-      errorLogger = require('./logger').error;
-
+      errorLogger = require('./logger').error,
+      getName = require('./generalPurpose').getName,
+      join = require('./generalPurpose').join;
 
 /**
  * [getReadableStream Function to create a readable stream]
@@ -43,11 +44,11 @@ function dispatchStream(source, res, tag) {
 
   const folder = pathResolve('..' + buildDoc + tag);
   mkdir(folder);
-  source.pipe(fs.createWriteStream(folder + '\\document.csv', {flags: 'a'}))
+  source.pipe(fs.createWriteStream(join(folder, 'document.csv'), {flags: 'a'}))
     .on('finish',_ => {
       infoLogger(`Finished Compressing`);
       res.json({
-        target: tag + '\\document.csv',
+        target: join(tag, 'document.csv')
       });
     })
     .on('error', err => {
@@ -85,20 +86,22 @@ function dataParser(tag, isPhysicalLocation) {
     
     const fileName = link.split( '/' ).pop(),
           folderPath = pathResolve('..' + srcDir + tag + '/'),
-          filePath = folderPath + '\\' +fileName;
-    let stream;
-
+          filePath = join(folderPath,fileName);
+    let stream,isError = false;
+    
     mkdir(folderPath);
 
     infoLogger(`Fetching image named ${fileName}`);
     if(isPhysicalLocation) {
       stream = fs.createReadStream(link)
         .on('error',err => {
+          isError = true;
           errorLogger(`Error occured in fetching image ${fileName}  Error :- ${JSON.stringify(err)}`);
         })
     } else {
       stream = got.stream(link)
         .on('error',err => {
+          isError = true;
           errorLogger(`Error occured in fetching image ${fileName}  Error :- ${JSON.stringify(err)}`);
         })
     }
@@ -106,12 +109,12 @@ function dataParser(tag, isPhysicalLocation) {
     stream
       .pipe(fs.createWriteStream(filePath, {flags: 'a'}))
       .on('close', _ => {
-        infoLogger('Compressing.... ', filePath.split('\\').pop())
-        compressor.compressWithFile(filePath, tag, this, next)
+        infoLogger('Compressing.... ', getName(filePath))
+        compressor.compressWithFile(filePath, tag, this, next, isError)
         .catch(console.error);
       })
       .on('error', err=> {
-        errorLogger(`${JSON.stringify(err)}`);
+        errorLogger(err);
         next();
       });
 

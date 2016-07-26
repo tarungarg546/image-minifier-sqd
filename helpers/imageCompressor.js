@@ -16,7 +16,9 @@ const got = require('got'),
       buildLocation = server.protocol + '://' + server.hostname + ':' + server.port + server.buildPath,
       distDir = server.buildPath + server.buildDist,
       errorLogger = require('./logger').error,
-      infoLogger = require('./logger').info;
+      infoLogger = require('./logger').info,
+      getName = require('./generalPurpose').getName,
+      join = require('./generalPurpose').join;
 
 
 /**
@@ -25,8 +27,9 @@ const got = require('got'),
  * @param  {String}   tag      [Unique tag generated earlier]
  * @param  {Stream}   stream   [Stream that is coming from transform in streamLib]
  * @param  {Function} next     [NExt function which will be called after consuming current stream]
+ * @param {Boolean} isError [Is there is an error coming from stream]
  */
-function compressImage(filePath, tag, stream, next) {
+function compressImage(filePath, tag, stream, next, isError) {
   
   function convertIntoServerLocation(fileName) {
     return buildLocation + tag + '/' + fileName + '\n'
@@ -36,17 +39,19 @@ function compressImage(filePath, tag, stream, next) {
     plugins: imageminOptions
   })
   .then(file => {
-
+    if(isError) {
+      throw new Error();
+    }
     infoLogger(`Compressed and saved at location ${file[0].path}`);
-    const fileName = file[0].path.split('\\').pop();
+    const fileName = getName(file[0].path);
     stream.push(convertIntoServerLocation(fileName));
     next();
 
   })
   .catch(err => {
-    
-    errorLogger("Error occured in converting image named "+ filePath.split('\\').pop());
-    stream.push("Error occured in converting image named "+ filePath.split('\\').pop() + '\n');
+
+    errorLogger("Error occured in converting image named "+ getName(filePath));
+    stream.push("Error occured in converting image named "+ getName(filePath));
     next();
 
   });
